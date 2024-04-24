@@ -1,7 +1,8 @@
-import javax.print.attribute.standard.Fidelity;
 import java.util.*;
 
 public class Main {
+
+    private static int DeepCopyReference;
 
     public static void main(String[] args) throws CloneNotSupportedException{
         System.out.println("Початок роботи");
@@ -34,9 +35,8 @@ public class Main {
                     "5.Sort " + '\n' +
                     "6.Add a copy of the element " + '\n' +
                     "7.Search on array " + '\n' +
-                    "8.Object interaction " + '\n' +
-                    "9.Divide into 2 categories " + '\n' +
-                    "10.Add cargo to boat's vault " + '\n' +
+                    "8.Interaction" + '\n' +
+                    "9.Make tournament" + '\n' +
                     "11.Exit");
             int action = scanner.nextInt();
             int index = 0;
@@ -90,14 +90,95 @@ public class Main {
                             return Integer.compare(o1.getLevel(), o2.getLevel());
                         }
                     });
-                    break;
-
                     obj.sort(Comparator.comparingDouble(IdleonCharacter::getExperience));
+                    break;
                 case 6:
-                    //deep copy of element
+                    System.out.println("Enter the index of the element you'd like to copy:");
+                    int copyIndex = scanner.nextInt();
+                    try {
+                        IdleonCharacter original = obj.get(copyIndex).clone();
+                        if (original.getDeepCopyRef() != null) {
+                            IdleonCharacter deepCopyRef = (IdleonCharacter) original.getDeepCopyRef().clone();
+                            original.setDeepCopyRef(deepCopyRef);
+                        }
+                        obj.add(original);
+                        System.out.println("Copy added successfully.");
+                    } catch (CloneNotSupportedException e) {
+                        System.out.println("Cloning not supported for this object.");
+                    }
                     break;
                 case 7:
-                    //binary search
+                    System.out.println("Enter the parameters for search:");
+                    System.out.print("Name: ");
+                    String searchName = scanner.next();
+                    System.out.print("Level: ");
+                    int searchLevel = scanner.nextInt();
+                    System.out.print("Experience: ");
+                    double searchExperience = scanner.nextDouble();
+
+                    IdleonCharacter searchObject = new IdleonCharacter(searchName, searchLevel, searchExperience, new String[0]);
+
+                    Collections.sort(obj);
+
+                    int searchIndex = Arrays.binarySearch(obj.toArray(), searchObject);
+
+                    if (searchIndex >= 0) {
+                        System.out.println("Object found at index: " + searchIndex);
+
+                        for (int i = searchIndex + 1; i < obj.size(); i++) {
+                            if (obj.get(i).compareTo(searchObject) == 0) {
+                                System.out.println("Object found at index: " + i);
+                            } else {
+                                break;
+                            }
+                        }
+                    } else {
+                        System.out.println("Object not found in the array.");
+                    }
+                    break;
+                case 8:
+                    System.out.println("Enter parameters for the temporary object:");
+                    System.out.print("Name: ");
+                    String tempName = scanner.next();
+                    System.out.print("Level: ");
+                    int tempLevel = scanner.nextInt();
+                    System.out.print("Experience: ");
+                    double tempExperience = scanner.nextDouble();
+
+                    IdleonCharacter tempObject = new IdleonCharacter(tempName, tempLevel, tempExperience, new String[0]);
+
+                    for (IdleonCharacter character : obj) {
+                        if (tempObject.getLevel() > character.getLevel()) {
+                            System.out.println(tempObject.getName() + " is stronger than " + character.getName());
+                        } else if (tempObject.getLevel() < character.getLevel()) {
+                            System.out.println(tempObject.getName() + " is weaker than " + character.getName());
+                        } else {
+                            System.out.println(tempObject.getName() + " is as strong as " + character.getName());
+                        }
+                    }
+                    break;
+                case 9:
+                    if (obj.size() % 2 != 0) {
+                        System.out.println("Непарна кількість об'єктів у поточному масиві. Неможливо сформувати дві команди.");
+                    } else {
+                        ArrayList<IdleonCharacter> team1 = new ArrayList<>();
+                        for (int i = 0; i < obj.size(); i += 2) {
+                            team1.add(obj.get(i));
+                        }
+
+                        ArrayList<IdleonCharacter> team2 = new ArrayList<>();
+                        for (int i = 1; i < obj.size(); i += 2) {
+                            team2.add(obj.get(i));
+                        }
+                        if (IdleonCharacter.calculateTeamStrength(team1) > IdleonCharacter.calculateTeamStrength(team2)) {
+                            System.out.println("Перша команда виграла!");
+                        } else if (IdleonCharacter.calculateTeamStrength(team1) < IdleonCharacter.calculateTeamStrength(team2)) {
+                            System.out.println("Друга команда виграла!");
+                        } else {
+                            System.out.println("Нічия!");
+                        }
+                    }
+                    break;
             }
         }
 

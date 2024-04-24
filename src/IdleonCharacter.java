@@ -1,11 +1,12 @@
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Cte double exomparator;
+import java.util.Comparator;
 import java.util.Scanner;
 
-public class IdleonCharacter implements Comparable<IdleonCharacter> {
+public class IdleonCharacter implements Comparable<IdleonCharacter>, Cloneable {
     private String name;
     private int level;
-    privaperience;
+    private double experience;
     private String[] inventory;
     private IdleonCharacter deepCopyRef;
 
@@ -14,8 +15,6 @@ public class IdleonCharacter implements Comparable<IdleonCharacter> {
     static {
         System.out.println("Static initialization block called.");
     }
-
-
 
     {
         System.out.println("Instance initialization block called.");
@@ -74,6 +73,13 @@ public class IdleonCharacter implements Comparable<IdleonCharacter> {
     public void gainExperience(double exp) {
         experience += exp;
         System.out.println(name + " gained " + exp + " experience!");
+    }
+    public static double calculateTeamStrength(ArrayList<IdleonCharacter> team) {
+        double totalStrength = 0;
+        for (IdleonCharacter character : team) {
+            totalStrength += character.getLevel();
+        }
+        return totalStrength;
     }
 
     public void addItemToInventory(String item) {
@@ -178,9 +184,12 @@ public class IdleonCharacter implements Comparable<IdleonCharacter> {
     @Override
     public IdleonCharacter clone() throws CloneNotSupportedException {
         IdleonCharacter clonedCharacter = (IdleonCharacter) super.clone();
-        clonedCharacter.setDeepCopyRef(this.deepCopyRef.clone());
+        if (this.deepCopyRef != null) {
+            clonedCharacter.setDeepCopyRef(this.deepCopyRef.clone());
+        }
         return clonedCharacter;
     }
+
 
     @Override
     public boolean equals(Object o) {
